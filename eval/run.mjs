@@ -4,7 +4,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { PROVIDER, MODEL_NAME, usage, transcribeHandwriting, gradeWriting, friendlyError } from "../ai.js";
+import { PROVIDER, MODEL_NAME, usage, transcribeHandwriting, gradeWriting, friendlyError } from "../server/ai.js";
 
 // Giá USD / 1 triệu token (đầu vào, đầu ra)
 const PRICE = { "claude-opus-5-5": [4, 20], "claude-sonnet-5-5": [2, 10], "claude-haiku-5-5": [0.1, 0.5] };

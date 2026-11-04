@@ -8,7 +8,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import vision from "@google-cloud/vision";
-import { transcribeHandwriting, friendlyError, PROVIDER } from "../ai.js";
+import { transcribeHandwriting, friendlyError, PROVIDER } from "../server/ai.js";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const pagesDir = path.join(here, "ocr-pages");
