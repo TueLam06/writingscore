@@ -1,0 +1,83 @@
+{
+  "source": "Cambridge Assessment English / IELTS – Academic Writing sample candidate scripts and examiner comments (bài viết tay thật, band do giám khảo chấm). Ảnh đã cắt bỏ phần nhận xét và band. Band theo bản IELTS.org Academic Writing Sample Tasks 2023 (ielts.org/cdn/Sample-tests/ielts-academic-writing-sample-tasks-2023.pdf); examinerBandOld = band ở bản cũ.",
+  "prompts": {
+    "2A": "Some people believe that children who are brought up in families that do not have large amounts of money are better prepared to deal with the problems of adult life than children brought up by wealthy parents.\n\nTo what extent do you agree or disagree with this opinion?\n\nGive reasons for your answer and include any relevant examples from your own knowledge or experience.\n\nWrite at least 250 words.",
+    "2B": "International tourism has brought enormous benefit to many places. At the same time, there is concern about its impact on local inhabitants and the environment.\n\nDo the disadvantages of international tourism outweigh the advantages?\n\nGive reasons for your answer and include any relevant examples from your own knowledge or experience.\n\nWrite at least 250 words.",
+    "CD2": "The average standard of people's health is likely to be lower in the future than it is now.\n\nTo what extent do you agree or disagree with this statement?\n\nGive reasons for your answer and include any relevant examples from your own knowledge or experience.\n\nWrite at least 250 words.",
+    "TV": "Some people believe that watching TV is bad for children, while others claim it has positive effects for children as they grow up.\n\nDiscuss both views and give your opinion."
+  },
+  "samples": [
+    {
+      "id": "2A-A",
+      "task": "2A",
+      "pages": [
+        "p11.jpg"
+      ],
+      "examinerBand": 4,
+      "typed": "2a-a.txt"
+    },
+    {
+      "id": "2A-B",
+      "task": "2A",
+      "pages": [
+        "p12.jpg",
+        "p13.jpg"
+      ],
+      "examinerBand": 6.5,
+      "typed": "2a-b.txt"
+    },
+    {
+      "id": "2A-C",
+      "task": "2A",
+      "pages": [
+        "p14.jpg",
+        "p15.jpg"
+      ],
+      "examinerBand": 8.5,
+      "examinerBandOld": 8,
+      "typed": "2a-c.txt"
+    },
+    {
+      "id": "2B-A",
+      "task": "2B",
+      "pages": [
+        "p16.jpg"
+      ],
+      "examinerBand": 5.5,
+      "examinerBandOld": 5,
+      "typed": "2b-a.txt"
+    },
+    {
+      "id": "2B-B",
+      "task": "2B",
+      "pages": [
+        "p18.jpg",
+        "p19.jpg"
+      ],
+      "examinerBand": 7.5,
+      "examinerBandOld": 7,
+      "typed": "2b-b.txt"
+    },
+    {
+      "id": "CD-R1",
+      "task": "CD2",
+      "typed": "cd-r1.txt",
+      "examinerBand": 5.5,
+      "source": "IELTS.org computer-delivered Academic Writing sample, Part 2 Candidate Response 1"
+    },
+    {
+      "id": "CD-R2",
+      "task": "CD2",
+      "typed": "cd-r2.txt",
+      "examinerBand": 7.5,
+      "source": "IELTS.org computer-delivered Academic Writing sample, Part 2 Candidate Response 2 (IDP India labels it Band 8)"
+    },
+    {
+      "id": "IC01-TV",
+      "task": "TV",
+      "typed": "../teacher/ic01-tv.txt",
+      "examinerBand": 6,
+      "source": "Bài học viên IC01 (25/8/2026), giáo viên Linh Trinh chấm Overall 6.0 – bản gốc trước khi giáo viên sửa"
+    }
+  ]
+}

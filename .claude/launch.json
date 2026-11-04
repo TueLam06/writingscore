@@ -1,0 +1,6 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    { "name": "writingscored", "runtimeExecutable": "npm", "runtimeArgs": ["--prefix", "D:/writingscored", "start"], "port": 3000 }
+  ]
+}
