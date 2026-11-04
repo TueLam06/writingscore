@@ -3,7 +3,6 @@ data/
 .env
 google-vision-key.json
 *.key.json
-prompts/anchors.local.json
 eval/samples/
 eval/anchors/
 eval/typed/
@@ -11,7 +10,7 @@ eval/ocr-pages/
 eval/teacher/
 
 # Có bản quyền / chỉ dùng nội bộ
-prompts/anchors.local*.json
+server/prompts/anchors.local*.json
 eval/results-*.json
 eval/samples.backup-*.json
 eval/ocr-compare.html
@@ -19,3 +18,5 @@ eval/ocr-compare.html
 # Tài liệu nội bộ
 docs/
 HANDOFF.md
+client/dist/
+CLAUDE.md
