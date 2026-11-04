@@ -12,10 +12,32 @@ Web nhỏ chạy trên máy (localhost) để giao và chấm bài IELTS Writing
 
 ```bash
 npm install
+npm run build
 npm start
 ```
 
-Mở http://localhost:3000, rồi chọn người dùng ở góc trên (GV1 là giáo viên, HS1/HS2/HS3 là học viên).
+Mở http://localhost:3000, rồi chọn người dùng ở cuối thanh bên trái (GV1 là giáo viên, HS1/HS2/HS3 là học viên).
+
+Khi sửa giao diện: chạy `npm start` và `npm run dev` ở hai terminal, rồi mở http://localhost:5173 (tự tải lại khi lưu file).
+
+## Cấu trúc
+
+```
+server/            Backend Express
+  index.js         Khởi động server, gắn các route
+  routes/          API: assignments, submissions, speaking
+  ai.js            Gọi Claude / Gemini / DEMO
+  prompts/         Câu lệnh chấm Writing và Speaking
+  db.js, images.js, paths.js
+client/            Frontend React + Vite
+  src/pages/       Màn hình giáo viên, học viên
+  src/components/  Thành phần giao diện dùng lại
+  src/lib/         Gọi API, định dạng, xử lý ảnh, tô lỗi
+  src/styles/      CSS (màu, font)
+  public/          speaking.html (trang Luyện nói)
+eval/              Bộ đo độ lệch so với giám khảo (npm run eval)
+data/              Dữ liệu chạy (không đưa lên Git)
+```
 
 ## Dùng AI thật
 
@@ -44,6 +66,6 @@ Mô hình dùng: `claude-opus-5-5`. Ước tính khoảng 1.000–3.000đ cho m�
 
 ## Giới hạn của bản demo
 
-- Chưa có đăng nhập thật (chọn người dùng bằng menu); danh sách học viên sửa trong `SEED` ở `server.js`.
+- Chưa có đăng nhập thật (chọn người dùng bằng menu); danh sách học viên sửa trong `SEED` ở `server/db.js`.
 - Lưu dữ liệu bằng file JSON. Đủ cho thử nghiệm; dùng thật lâu dài nên chuyển sang cơ sở dữ liệu (SQLite/Supabase).
 - Luyện nói (Speaking, bản demo) ở http://localhost:3000/speaking.html: cần Chrome/Edge (nhận dạng giọng nói của trình duyệt, gửi âm thanh qua máy chủ Google). AI chỉ chấm trên bản chép lời nói + số đo thời gian/ngắt nghỉ, nên Pronunciation là ước lượng.
