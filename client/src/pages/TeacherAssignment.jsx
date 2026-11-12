@@ -5,9 +5,9 @@ import { ZoomImg } from "../components/Zoom.jsx";
 import GradeView from "../components/GradeView.jsx";
 import PromptBlock from "../components/PromptBlock.jsx";
 
-export default function TeacherAssignment({ assignment: a, users, onEdit, onDeleted }) {
+export default function TeacherAssignment({ assignment: a, users, initialOpenId = null, onEdit, onChanged, onDeleted }) {
   const [subs, setSubs] = useState([]);
-  const [openId, setOpenId] = useState(null);
+  const [openId, setOpenId] = useState(initialOpenId);
   const [notice, setNotice] = useState("");
   const students = users.filter((u) => u.role === "student");
 
@@ -78,7 +78,7 @@ export default function TeacherAssignment({ assignment: a, users, onEdit, onDele
           s={openSub}
           a={a}
           student={users.find((u) => u.id === openSub.studentId)}
-          onReviewed={async (name) => { await load(); setOpenId(null); setNotice(`Đã lưu điểm duyệt cho ${name}.`); }}
+          onReviewed={async (name) => { await load(); await onChanged?.(); setOpenId(null); setNotice(`Đã lưu điểm duyệt cho ${name}.`); }}
         />
       )}
     </>
