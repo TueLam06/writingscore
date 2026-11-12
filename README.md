@@ -34,7 +34,7 @@ client/            Frontend React + Vite
   src/components/  Thành phần giao diện dùng lại
   src/lib/         Gọi API, định dạng, xử lý ảnh, tô lỗi
   src/styles/      CSS (màu, font)
-  public/          speaking.html (trang Luyện nói)
+  public/          speaking.html (Luyện nói, đang tạm ẩn khỏi giao diện)
 eval/              Bộ đo độ lệch so với giám khảo (npm run eval)
 data/              Dữ liệu chạy (không đưa lên Git)
 ```
@@ -68,4 +68,4 @@ Mô hình dùng: `claude-opus-5-5`. Ước tính khoảng 1.000–3.000đ cho m�
 
 - Chưa có đăng nhập thật (chọn người dùng bằng menu); danh sách học viên sửa trong `SEED` ở `server/db.js`.
 - Lưu dữ liệu bằng file JSON. Đủ cho thử nghiệm; dùng thật lâu dài nên chuyển sang cơ sở dữ liệu (SQLite/Supabase).
-- Luyện nói (Speaking, bản demo) ở http://localhost:3000/speaking.html: cần Chrome/Edge (nhận dạng giọng nói của trình duyệt, gửi âm thanh qua máy chủ Google). AI chỉ chấm trên bản chép lời nói + số đo thời gian/ngắt nghỉ, nên Pronunciation là ước lượng.
+- Luyện nói (Speaking) đang **tạm ẩn** khỏi giao diện vì chưa hoạt động ổn; trang cũ vẫn mở được ở http://localhost:3000/speaking.html: cần Chrome/Edge (nhận dạng giọng nói của trình duyệt, gửi âm thanh qua máy chủ Google). AI chỉ chấm trên bản chép lời nói + số đo thời gian/ngắt nghỉ, nên Pronunciation là ước lượng.
