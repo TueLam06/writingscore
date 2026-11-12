@@ -1,10 +1,18 @@
-const Icon = ({ d }) => (
+const ICONS = {
+  list: <><rect x="4" y="3" width="16" height="18" rx="2" /><path d="M8 8h8M8 12h8M8 16h5" /></>,
+  plus: <><circle cx="12" cy="12" r="9" /><path d="M12 8v8M8 12h8" /></>,
+  check: <><circle cx="12" cy="12" r="9" /><path d="M8 12.5l2.5 2.5L16 9.5" /></>,
+  pen: <path d="M4 20h4L19 9l-4-4L4 16v4z" />,
+  star: <path d="M12 4l2.4 4.9 5.4.8-3.9 3.8.9 5.4-4.8-2.6-4.8 2.6.9-5.4-3.9-3.8 5.4-.8z" />,
+};
+
+const Icon = ({ name }) => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-    {d}
+    {ICONS[name]}
   </svg>
 );
 
-export default function Sidebar({ meta, me, onSwitchUser }) {
+export default function Sidebar({ meta, me, items, active, onSelect, onSwitchUser }) {
   return (
     <aside className="sidebar">
       <div className="brand">
@@ -13,14 +21,19 @@ export default function Sidebar({ meta, me, onSwitchUser }) {
       </div>
 
       <nav className="nav" aria-label="Điều hướng chính">
-        <a href="/" className="active" aria-current="page">
-          <Icon d={<><rect x="4" y="3" width="16" height="18" rx="2" /><path d="M8 8h8M8 12h8M8 16h5" /></>} />
-          Writing
-        </a>
-        <a href="/speaking.html">
-          <Icon d={<><rect x="9" y="3" width="6" height="11" rx="3" /><path d="M5 11a7 7 0 0 0 14 0M12 18v3" /></>} />
-          Luyện nói
-        </a>
+        {items.map((it) => (
+          <button
+            type="button"
+            key={it.id}
+            className={active === it.id ? "active" : ""}
+            aria-current={active === it.id ? "page" : undefined}
+            onClick={() => onSelect(it.id)}
+          >
+            <Icon name={it.icon} />
+            <span className="grow">{it.label}</span>
+            {it.count > 0 && <span className="nav-count">{it.count}</span>}
+          </button>
+        ))}
       </nav>
 
       <div className="side-foot">
