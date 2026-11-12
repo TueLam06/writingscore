@@ -66,6 +66,11 @@ h1, h2, h3 { letter-spacing: -0.01em; }
 .nav a:hover, .nav button:hover { background: var(--navy-2); color: #fff; }
 .nav .active { background: var(--navy-2); color: #fff; font-weight: 600; }
 .nav svg { flex: none; }
+.nav-count {
+  min-width: 22px; height: 22px; padding: 0 7px; border-radius: 999px;
+  background: var(--gold); color: var(--navy); font-size: 12px; font-weight: 700;
+  display: inline-flex; align-items: center; justify-content: center;
+}
 
 .side-foot { margin-top: auto; display: flex; flex-direction: column; gap: 12px; border-top: 1px solid var(--navy-line); padding-top: 16px; }
 .side-foot label { font-size: 12px; color: #9aa6ba; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
