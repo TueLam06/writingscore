@@ -16,7 +16,7 @@ npm run build
 npm start
 ```
 
-Mở http://localhost:3000, rồi chọn người dùng ở cuối thanh bên trái (GV1 là giáo viên, HS1/HS2/HS3 là học viên).
+Mở http://localhost:3000, đăng ký tài khoản (học viên hoặc giáo viên) hoặc đăng nhập. Cần điền `JWT_SECRET` trong `.env` (xem `.env.example`); điền `ADMIN_EMAIL` + `ADMIN_PASSWORD` để có tài khoản admin.
 
 Khi sửa giao diện: chạy `npm start` và `npm run dev` ở hai terminal, rồi mở http://localhost:5173 (tự tải lại khi lưu file).
 
@@ -25,10 +25,13 @@ Khi sửa giao diện: chạy `npm start` và `npm run dev` ở hai terminal, r�
 ```
 server/            Backend Express
   index.js         Khởi động server, gắn các route
-  routes/          API: assignments, submissions, speaking
+  routes/          API: auth, users, assignments, submissions, speaking
+  middleware/      Kiểm tra đăng nhập, phân quyền, giới hạn số lần thử
+  auth/            Ký và kiểm tra JWT
   ai.js            Gọi Claude / Gemini / DEMO
   prompts/         Câu lệnh chấm Writing và Speaking
-  db.js, images.js, paths.js
+  db/              Kết nối Postgres (index.js), schema.sql
+  images.js, paths.js
 client/            Frontend React + Vite
   src/pages/       Màn hình giáo viên, học viên
   src/components/  Thành phần giao diện dùng lại
@@ -36,7 +39,8 @@ client/            Frontend React + Vite
   src/styles/      CSS (màu, font)
   public/          speaking.html (Luyện nói, đang tạm ẩn khỏi giao diện)
 eval/              Bộ đo độ lệch so với giám khảo (npm run eval)
-data/              Dữ liệu chạy (không đưa lên Git)
+scripts/           migrate-json.js: chép data/db.json cũ sang Postgres
+data/              Ảnh tải lên (không đưa lên Git)
 ```
 
 ## Dùng AI thật
@@ -60,12 +64,12 @@ Mô hình dùng: `claude-opus-5-5`. Ước tính khoảng 1.000–3.000đ cho m�
 
 ## Dữ liệu
 
-- `data/db.json`: bài tập và bài nộp
-- `data/uploads/`: ảnh bài viết
-- Xoá thư mục `data/` để làm lại từ đầu.
+- PostgreSQL trên Neon: người dùng, bài tập, bài nộp (kết quả chấm lưu dạng JSONB). Điền `DATABASE_URL` trong `.env` (xem `.env.example`); bảng tự tạo khi server khởi động (`server/db/schema.sql`).
+- `data/uploads/`: ảnh bài viết và ảnh đề (vẫn lưu trên máy).
+- Có dữ liệu cũ trong `data/db.json`: chạy `npm run db:migrate-json` để chép sang Postgres (chạy lại nhiều lần không bị trùng).
 
 ## Giới hạn của bản demo
 
-- Chưa có đăng nhập thật (chọn người dùng bằng menu); danh sách học viên sửa trong `SEED` ở `server/db.js`.
-- Lưu dữ liệu bằng file JSON. Đủ cho thử nghiệm; dùng thật lâu dài nên chuyển sang cơ sở dữ liệu (SQLite/Supabase).
+- Đăng nhập bằng email + mật khẩu (JWT); chưa có xác thực email và quên mật khẩu. Vai trò: học viên, giáo viên, admin.
+- Ảnh vẫn lưu ở ổ đĩa máy chủ (`data/uploads/`), chưa lên dịch vụ lưu trữ đám mây.
 - Luyện nói (Speaking) đang **tạm ẩn** khỏi giao diện vì chưa hoạt động ổn; trang cũ vẫn mở được ở http://localhost:3000/speaking.html: cần Chrome/Edge (nhận dạng giọng nói của trình duyệt, gửi âm thanh qua máy chủ Google). AI chỉ chấm trên bản chép lời nói + số đo thời gian/ngắt nghỉ, nên Pronunciation là ước lượng.
