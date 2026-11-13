@@ -4,7 +4,9 @@ import multer from "multer";
 import heicConvert from "heic-convert";
 import { createCanvas, loadImage as decodeImage } from "@napi-rs/canvas";
 import { UPLOAD_DIR } from "./paths.js";
-import { newId } from "./db.js";
+import { newId } from "./db/index.js";
+
+fs.mkdirSync(UPLOAD_DIR, { recursive: true });
 
 const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif", "image/heic", "image/heif"];
 const isHeic = (file) => /hei[cf]/i.test(file.mimetype) || /\.hei[cf]$/i.test(file.originalname);
