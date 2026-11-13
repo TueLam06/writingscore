@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { api } from "./lib/api.js";
+import { isStaff, ROLE_NAME, useAuth } from "./lib/auth.jsx";
 import { ZoomProvider } from "./components/Zoom.jsx";
 import Sidebar from "./components/Sidebar.jsx";
 import AssignmentList from "./components/AssignmentList.jsx";
@@ -7,68 +8,51 @@ import AssignmentForm from "./components/AssignmentForm.jsx";
 import TeacherAssignment from "./pages/TeacherAssignment.jsx";
 import StudentAssignment from "./pages/StudentAssignment.jsx";
 import ReviewQueue from "./pages/ReviewQueue.jsx";
+import AuthPage from "./pages/AuthPage.jsx";
+import AccountPage from "./pages/AccountPage.jsx";
+import UsersPage from "./pages/UsersPage.jsx";
 
 const isDone = (s) => s?.status === "graded" || s?.status === "reviewed";
-const DEFAULT_VIEW = { teacher: "assignments", student: "todo" };
 
 export default function App() {
+  const { user, loading } = useAuth();
+  if (loading) return <div className="empty"><span className="spinner" /> Đang tải…</div>;
+  if (!user) return <AuthPage />;
+  return <Workspace key={user.id} me={user} />;
+}
+
+function Workspace({ me }) {
+  const { logout } = useAuth();
+  const staff = isStaff(me);
   const [meta, setMeta] = useState(null);
-  const [meId, setMeId] = useState(null);
   const [assignments, setAssignments] = useState([]);
-  const [subs, setSubs] = useState([]); // GV: mọi bài nộp; HV: bài nộp của mình
-  const [view, setView] = useState(null);
+  const [subs, setSubs] = useState([]); // GV/admin: mọi bài nộp; HV: bài nộp của mình
+  const [students, setStudents] = useState([]);
+  const [view, setView] = useState(staff ? "assignments" : "todo");
   const [selected, setSelected] = useState(null);
   const [editing, setEditing] = useState(false);
   const [openSubId, setOpenSubId] = useState(null);
   const [error, setError] = useState("");
 
-  const me = meta?.users.find((u) => u.id === meId);
-
-  useEffect(() => {
-    api("/api/meta")
-      .then((m) => {
-        setMeta(m);
-        const saved = localStorage.getItem("me");
-        setMeId(m.users.some((u) => u.id === saved) ? saved : m.users[0].id);
-      })
-      .catch((e) => setError(`Không tải được dữ liệu: ${e.message}`));
-  }, []);
-
   const reload = useCallback(async () => {
-    if (!me) return [];
-    const [a, s] = await Promise.all([
+    const [a, s, st] = await Promise.all([
       api("/api/assignments"),
-      api(me.role === "student" ? `/api/submissions?studentId=${me.id}` : "/api/submissions"),
+      api("/api/submissions"),
+      staff ? api("/api/users?role=student") : Promise.resolve([]),
     ]);
     setAssignments(a);
     setSubs(s);
+    setStudents(st);
     return s;
-  }, [me]);
+  }, [staff]);
 
   useEffect(() => {
-    if (!me) return;
-    setView(DEFAULT_VIEW[me.role]);
-    setSelected(null);
-    setEditing(false);
+    api("/api/meta").then(setMeta).catch(() => {});
     reload().catch((e) => setError(e.message));
-  }, [me, reload]);
-
-  const switchUser = (id) => {
-    localStorage.setItem("me", id);
-    setMeId(id);
-  };
+  }, [reload]);
 
   const go = (v) => { setView(v); setSelected(null); setEditing(false); setOpenSubId(null); };
   const open = (id) => { setSelected(id); setEditing(false); setOpenSubId(null); };
-
-  if (!me || !view) {
-    return (
-      <div className="shell">
-        <Sidebar meta={meta} me={me} items={[]} onSwitchUser={switchUser} />
-        <main className="main">{error && <div className="notice bad">{error}</div>}</main>
-      </div>
-    );
-  }
 
   const subOf = (aid) => subs.find((s) => s.assignmentId === aid);
   const assignment = assignments.find((a) => a.id === selected);
@@ -76,16 +60,20 @@ export default function App() {
   const todo = assignments.filter((a) => !isDone(subOf(a.id)));
   const done = assignments.filter((a) => isDone(subOf(a.id)));
 
-  const items = me.role === "teacher"
-    ? [
-        { id: "assignments", label: "Bài tập", icon: "list" },
-        { id: "review", label: "Chờ duyệt", icon: "check", count: pendingCount },
-        { id: "new", label: "Giao bài mới", icon: "plus" },
-      ]
-    : [
-        { id: "todo", label: "Cần làm", icon: "pen", count: todo.length },
-        { id: "done", label: "Đã chấm", icon: "star", count: done.length },
-      ];
+  const items = [
+    ...(staff
+      ? [
+          { id: "assignments", label: "Bài tập", icon: "list" },
+          { id: "review", label: "Chờ duyệt", icon: "check", count: pendingCount },
+          { id: "new", label: "Giao bài mới", icon: "plus" },
+        ]
+      : [
+          { id: "todo", label: "Cần làm", icon: "pen", count: todo.length },
+          { id: "done", label: "Đã chấm", icon: "star", count: done.length },
+        ]),
+    ...(me.role === "admin" ? [{ id: "users", label: "Người dùng", icon: "users" }] : []),
+    { id: "account", label: "Tài khoản", icon: "user" },
+  ];
   const current = items.find((it) => it.id === view);
 
   // Học viên nộp bài xong → chuyển sang mục "Đã chấm", vẫn mở đúng bài đó
@@ -95,7 +83,11 @@ export default function App() {
   };
 
   let body;
-  if (view === "new") {
+  if (view === "account") {
+    body = <AccountPage />;
+  } else if (view === "users") {
+    body = <UsersPage />;
+  } else if (view === "new") {
     body = (
       <div style={{ maxWidth: 760 }}>
         <AssignmentForm onCancel={() => go("assignments")} onSaved={async (a) => { await reload(); setView("assignments"); open(a.id); }} />
@@ -106,7 +98,7 @@ export default function App() {
       <ReviewQueue
         subs={subs}
         assignments={assignments}
-        users={meta.users}
+        users={students}
         onOpen={(s) => { setView("assignments"); setSelected(s.assignmentId); setEditing(false); setOpenSubId(s.id); }}
       />
     );
@@ -115,12 +107,12 @@ export default function App() {
     let detail;
     if (editing && assignment) {
       detail = <AssignmentForm assignment={assignment} onCancel={() => setEditing(false)} onSaved={async (a) => { await reload(); open(a.id); }} />;
-    } else if (assignment && me.role === "teacher") {
+    } else if (assignment && staff) {
       detail = (
         <TeacherAssignment
           key={`${assignment.id}-${openSubId}`}
           assignment={assignment}
-          users={meta.users}
+          users={students}
           initialOpenId={openSubId}
           onEdit={() => setEditing(true)}
           onChanged={reload}
@@ -128,7 +120,7 @@ export default function App() {
         />
       );
     } else if (assignment) {
-      detail = <StudentAssignment key={`${assignment.id}-${me.id}`} assignment={assignment} me={me} onChanged={studentChanged} />;
+      detail = <StudentAssignment key={assignment.id} assignment={assignment} me={me} onChanged={studentChanged} />;
     } else {
       detail = (
         <div className="card empty">
@@ -146,16 +138,18 @@ export default function App() {
     );
   }
 
+  const showAssignmentTitle = assignment && ["assignments", "todo", "done"].includes(view);
+
   return (
     <ZoomProvider>
       <div className="shell">
-        <Sidebar meta={meta} me={me} items={items} active={view} onSelect={go} onSwitchUser={switchUser} />
+        <Sidebar meta={meta} me={me} items={items} active={view} onSelect={go} onLogout={logout} />
         <main className="main">
           {error && <div className="notice bad" style={{ marginBottom: 16 }}>{error}</div>}
           <div className="page-head">
             <div>
-              <div className="crumb">{me.role === "teacher" ? "Giáo viên" : "Học viên"} / {current?.label}</div>
-              <h1 className="page-title">{assignment && !["new", "review"].includes(view) ? assignment.title : current?.label}</h1>
+              <div className="crumb">{ROLE_NAME[me.role]} / {current?.label}</div>
+              <h1 className="page-title">{showAssignmentTitle ? assignment.title : current?.label}</h1>
             </div>
           </div>
           {body}
